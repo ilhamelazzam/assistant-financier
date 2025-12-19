@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'services/app_session.dart';
+import 'financial_analysis_screen.dart';
+import 'budget_management_screen.dart';
+import 'models/analysis_models.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -16,14 +21,44 @@ class DashboardScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  children: const [
-                    _SummaryCard(),
-                    SizedBox(height: 16),
-                    _QuickActions(),
-                    SizedBox(height: 16),
-                    _SectionTitle('Tâches rapides'),
-                    SizedBox(height: 8),
-                    _QuickTipsList(),
+                  children: [
+                    const _SummaryCard(),
+                    const SizedBox(height: 16),
+                    const _QuickActions(),
+                    const SizedBox(height: 16),
+                    const _SectionTitle('Taches rapides'),
+                    const SizedBox(height: 8),
+                    _QuickTipsList(
+                      onAnalyzeWeek: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/analysis',
+                          arguments: AnalysisScreenArgs(
+                            initialPeriod: AnalysisPeriod.week,
+                            focusRecommendations: false,
+                          ),
+                        );
+                      },
+                      onEditFoodBudget: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/budget',
+                          arguments: BudgetScreenArgs(
+                            highlightCategory: 'Alimentation',
+                            openEdit: true,
+                          ),
+                        );
+                      },
+                      onViewAiTips: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/analysis',
+                          arguments: AnalysisScreenArgs(
+                            focusRecommendations: true,
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -38,6 +73,10 @@ class DashboardScreen extends StatelessWidget {
 class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = AppSession.instance.currentUser;
+    final name = (user?.displayName?.trim().isNotEmpty == true)
+        ? user!.displayName
+        : 'utilisateur';
     return Container(
       padding:
           const EdgeInsets.only(left: 20, right: 20, top: 24, bottom: 24),
@@ -85,9 +124,9 @@ class _Header extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Bonjour,',
-            style: TextStyle(
+          Text(
+            'Bonjour, $name',
+            style: const TextStyle(
               color: Colors.white70,
               fontSize: 14,
             ),
@@ -172,7 +211,7 @@ class _QuickActions extends StatelessWidget {
         _QuickActionButton(
           icon: Icons.mic,
           label: 'Assistant vocal',
-          onTap: () => Navigator.pushNamed(context, '/voice'),
+          onTap: () => Navigator.pushNamed(context, '/voice-start'),
         ),
         _QuickActionButton(
           icon: Icons.pie_chart,
@@ -256,43 +295,69 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _QuickTipsList extends StatelessWidget {
-  const _QuickTipsList();
+  final VoidCallback onAnalyzeWeek;
+  final VoidCallback onEditFoodBudget;
+  final VoidCallback onViewAiTips;
+
+  const _QuickTipsList({
+    required this.onAnalyzeWeek,
+    required this.onEditFoodBudget,
+    required this.onViewAiTips,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final tips = [
-      'Analyser mes dépenses de la semaine',
-      'Ajuster mon budget alimentation',
-      'Voir les conseils IA pour économiser',
-    ];
-
     return Column(
-      children: tips
-          .map(
-            (t) => Container(
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.auto_awesome,
-                      color: Color(0xFF00B8A9), size: 20),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      t,
-                      style: const TextStyle(fontSize: 13.5),
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right, color: Colors.grey),
-                ],
+      children: [
+        _QuickTipTile(
+          label: 'Analyser mes depenses de la semaine',
+          onTap: onAnalyzeWeek,
+        ),
+        _QuickTipTile(
+          label: 'Ajuster mon budget alimentation',
+          onTap: onEditFoodBudget,
+        ),
+        _QuickTipTile(
+          label: 'Voir les conseils IA pour economiser',
+          onTap: onViewAiTips,
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickTipTile extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _QuickTipTile({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.auto_awesome, color: Color(0xFF00B8A9), size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 13.5),
               ),
             ),
-          )
-          .toList(),
+            const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -338,3 +403,4 @@ class _DashboardBottomNav extends StatelessWidget {
     );
   }
 }
+

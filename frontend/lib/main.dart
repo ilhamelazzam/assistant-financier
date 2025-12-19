@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
-import 'screens/auth_screen.dart';
-import 'screens/dashboard_screen.dart';
-import 'screens/reset_password_screen.dart';
-import 'screens/voice_assistant_screen.dart';
-import 'screens/budget_management_screen.dart';
-import 'screens/financial_analysis_screen.dart';
-import 'screens/financial_goals_screen.dart';
-import 'screens/chat_history_screen.dart';
-import 'screens/user_profile_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/notifications_screen.dart';
-import 'screens/ai_reports_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'auth_screen.dart';
+import 'dashboard_screen.dart';
+import 'reset_password_screen.dart';
+import 'voice_assistant_screen.dart';
+import 'goal_selection_screen.dart';
+import 'budget_management_screen.dart';
+import 'financial_analysis_screen.dart';
+import 'financial_goals_screen.dart';
+import 'chat_history_screen.dart';
+import 'user_profile_screen.dart';
+import 'settings_screen.dart';
+import 'notifications_screen.dart';
+import 'ai_reports_screen.dart';
+import 'reset_password_code_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('fr_FR', null);
   runApp(const FinanceCoachApp());
 }
 
@@ -36,7 +41,9 @@ class FinanceCoachApp extends StatelessWidget {
       routes: {
         '/auth': (context) => const AuthScreen(),
         '/reset-password': (context) => const ResetPasswordScreen(),
+        '/reset-password-code': (context) => const ResetPasswordCodeScreen(),
         '/dashboard': (context) => const DashboardScreen(),
+        '/voice-start': (context) => const GoalSelectionScreen(),
         '/voice': (context) => const VoiceAssistantScreen(),
         '/budget': (context) => const BudgetManagementScreen(),
         '/analysis': (context) => const FinancialAnalysisScreen(),

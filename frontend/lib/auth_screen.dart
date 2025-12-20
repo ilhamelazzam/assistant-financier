@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:geocoding/geocoding.dart';
@@ -24,6 +25,8 @@ class _AuthScreenState extends State<AuthScreen> {
   bool showConfirmPassword = false;
   bool _isSubmitting = false;
   bool _locating = false;
+  bool _locationFailed = false;
+  String _locationHint = 'Votre ville';
 
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
@@ -115,6 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _detectLocation({required bool showMessage}) async {
+    if (_locating) return;
     if (!mounted) return;
     setState(() => _locating = true);
     try {
@@ -123,6 +127,7 @@ class _AuthScreenState extends State<AuthScreen> {
         if (showMessage) {
           _showError('Activez la localisation de votre appareil.');
         }
+        _setManualFallback('Activez la localisation ou saisissez votre ville.');
         return;
       }
 
@@ -134,32 +139,50 @@ class _AuthScreenState extends State<AuthScreen> {
         if (showMessage) {
           _showError('Autorisation de localisation refusee.');
         }
+        _setManualFallback('Autorisez la localisation ou saisissez votre ville.');
         return;
       }
 
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.medium,
-      );
+      ).timeout(const Duration(seconds: 5));
       final value = await _resolveLocation(position);
       if (value == null || value.isEmpty) {
         if (showMessage) {
           _showError('Ville introuvable pour ces coordonnees.');
         }
+        _setManualFallback('Saisissez votre ville manuellement.');
         return;
       }
       locationCtrl.text = value;
+      _locationFailed = false;
+      _locationHint = 'Votre ville';
       if (showMessage) {
         _showMessage('Localisation detectee.');
       }
+    } on TimeoutException {
+      if (showMessage) {
+        _showError('DÇ¸lai depasse. Saisissez votre ville manuellement.');
+      }
+      _setManualFallback('Saisissez votre ville manuellement.');
     } catch (error) {
       if (showMessage) {
         _showError('Detection impossible : $error');
       }
+      _setManualFallback('Saisissez votre ville manuellement.');
     } finally {
       if (mounted) {
         setState(() => _locating = false);
       }
     }
+  }
+
+  void _setManualFallback(String hint) {
+    if (!mounted) return;
+    setState(() {
+      _locationFailed = true;
+      _locationHint = hint;
+    });
   }
 
   Future<String?> _resolveLocation(Position position) async {
@@ -449,7 +472,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextField(
                           controller: locationCtrl,
                           decoration: InputDecoration(
-                            hintText: _locating ? 'Detection en cours...' : 'Votre ville',
+                            hintText: _locating
+                                ? 'Detection en cours...'
+                                : (_locationFailed ? _locationHint : 'Votre ville'),
                             filled: true,
                             fillColor: const Color(0xFFF7F9FB),
                             contentPadding: const EdgeInsets.symmetric(

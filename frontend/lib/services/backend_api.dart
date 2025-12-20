@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html show AnchorElement, Blob, Url;
 
 import 'package:flutter/foundation.dart';
 
@@ -15,6 +12,7 @@ import '../models/goal_chat_conversation.dart';
 import '../models/goal_chat_history.dart';
 import '../models/user_profile.dart';
 import '../models/voice_session_models.dart';
+import 'download_helper.dart' if (dart.library.html) 'download_helper_web.dart' as downloader;
 
 class BackendApi {
   /// Local backend URL; adjust to `http://10.0.2.2:8081` when using Android emulators.
@@ -421,11 +419,7 @@ class BackendApi {
   }
 
   void _triggerWebDownload(Uint8List bytes, String filename) {
-    final blob = html.Blob([bytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)..download = filename;
-    anchor.click();
-    html.Url.revokeObjectUrl(url);
+    downloader.triggerWebDownload(bytes, filename);
   }
 
   String _formatDate(DateTime date) => date.toIso8601String().split('T').first;

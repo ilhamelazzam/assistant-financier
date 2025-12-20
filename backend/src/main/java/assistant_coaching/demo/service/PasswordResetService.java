@@ -163,6 +163,10 @@ public class PasswordResetService {
             mailSender.send(message);
         } catch (MailException | MessagingException ex) {
             log.warn("Failed to send password reset email to {}", email, ex);
+            if (exposeCode) {
+                // In dev we still return the code instead of failing hard.
+                return false;
+            }
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Echec d'envoi de l'email.");
         }
         return true;

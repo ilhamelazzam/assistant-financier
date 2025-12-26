@@ -93,21 +93,20 @@ class _AuthScreenState extends State<AuthScreen> {
       final authResponse = isLogin
           ? await _backendApi.login(email: email, password: password)
           : await _backendApi.register(
-          email: email,
-          password: password,
-          displayName: _displayNameFromEmail(email),
-          phoneNumber: phone,
-          location: location,
-        );
+              email: email,
+              password: password,
+              displayName: _displayNameFromEmail(email),
+              phoneNumber: phone,
+              location: location,
+            );
+
       AppSession.instance.updateUser(authResponse);
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/dashboard');
     } catch (error) {
       _showError(_friendlyMessage(error));
     } finally {
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-      }
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -120,13 +119,12 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<void> _detectLocation({required bool showMessage}) async {
     if (_locating) return;
     if (!mounted) return;
+
     setState(() => _locating = true);
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        if (showMessage) {
-          _showError('Activez la localisation de votre appareil.');
-        }
+        if (showMessage) _showError('Activez la localisation de votre appareil.');
         _setManualFallback('Activez la localisation ou saisissez votre ville.');
         return;
       }
@@ -135,10 +133,9 @@ class _AuthScreenState extends State<AuthScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-        if (showMessage) {
-          _showError('Autorisation de localisation refusee.');
-        }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (showMessage) _showError('Autorisation de localisation refusee.');
         _setManualFallback('Autorisez la localisation ou saisissez votre ville.');
         return;
       }
@@ -146,34 +143,26 @@ class _AuthScreenState extends State<AuthScreen> {
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.medium,
       ).timeout(const Duration(seconds: 5));
+
       final value = await _resolveLocation(position);
       if (value == null || value.isEmpty) {
-        if (showMessage) {
-          _showError('Ville introuvable pour ces coordonnees.');
-        }
+        if (showMessage) _showError('Saisissez votre ville manuellement.');
         _setManualFallback('Saisissez votre ville manuellement.');
         return;
       }
+
       locationCtrl.text = value;
       _locationFailed = false;
       _locationHint = 'Votre ville';
-      if (showMessage) {
-        _showMessage('Localisation detectee.');
-      }
+      if (showMessage) _showMessage('Localisation detectee.');
     } on TimeoutException {
-      if (showMessage) {
-        _showError('DÇ¸lai depasse. Saisissez votre ville manuellement.');
-      }
+      if (showMessage) _showError('Delai depasse. Saisissez votre ville manuellement.');
       _setManualFallback('Saisissez votre ville manuellement.');
     } catch (error) {
-      if (showMessage) {
-        _showError('Detection impossible : $error');
-      }
+      if (showMessage) _showError('Detection impossible.');
       _setManualFallback('Saisissez votre ville manuellement.');
     } finally {
-      if (mounted) {
-        setState(() => _locating = false);
-      }
+      if (mounted) setState(() => _locating = false);
     }
   }
 
@@ -187,9 +176,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Future<String?> _resolveLocation(Position position) async {
     final local = await _resolveWithGeocoding(position);
-    if (local != null && local.isNotEmpty) {
-      return local;
-    }
+    if (local != null && local.isNotEmpty) return local;
     return _resolveWithHttp(position);
   }
 
@@ -199,9 +186,8 @@ class _AuthScreenState extends State<AuthScreen> {
         position.latitude,
         position.longitude,
       );
-      if (placemarks.isEmpty) {
-        return null;
-      }
+      if (placemarks.isEmpty) return null;
+
       final place = placemarks.first;
       final city = place.locality?.trim().isNotEmpty == true
           ? place.locality
@@ -209,7 +195,12 @@ class _AuthScreenState extends State<AuthScreen> {
               ? place.subAdministrativeArea
               : place.administrativeArea);
       final country = place.country?.trim().isNotEmpty == true ? place.country : null;
-      final value = [city, country].whereType<String>().where((part) => part.trim().isNotEmpty).join(', ');
+
+      final value = [city, country]
+          .whereType<String>()
+          .where((part) => part.trim().isNotEmpty)
+          .join(', ');
+
       return value.isEmpty ? null : value;
     } catch (_) {
       return null;
@@ -223,21 +214,19 @@ class _AuthScreenState extends State<AuthScreen> {
         'lat': position.latitude.toString(),
         'lon': position.longitude.toString(),
       });
+
       final response = await http.get(
         uri,
-        headers: const {
-          'Accept-Language': 'fr',
-        },
+        headers: const {'Accept-Language': 'fr'},
       );
-      if (response.statusCode != 200) {
-        return null;
-      }
+      if (response.statusCode != 200) return null;
+
       final data = jsonDecode(response.body);
-      if (data is! Map<String, dynamic>) {
-        return null;
-      }
+      if (data is! Map<String, dynamic>) return null;
+
       String? city;
       String? country;
+
       final address = data['address'];
       if (address is Map) {
         city = address['city'] as String? ??
@@ -247,14 +236,19 @@ class _AuthScreenState extends State<AuthScreen> {
             address['state'] as String?;
         country = address['country'] as String?;
       }
-      final value = [city, country].whereType<String>().where((part) => part.trim().isNotEmpty).join(', ');
-      if (value.isNotEmpty) {
-        return value;
-      }
+
+      final value = [city, country]
+          .whereType<String>()
+          .where((part) => part.trim().isNotEmpty)
+          .join(', ');
+
+      if (value.isNotEmpty) return value;
+
       final displayName = data['display_name'] as String?;
       if (displayName != null && displayName.trim().isNotEmpty) {
         return displayName.trim();
       }
+
       return null;
     } catch (_) {
       return null;
@@ -286,11 +280,8 @@ class _AuthScreenState extends State<AuthScreen> {
   String _displayNameFromEmail(String email) {
     final atIndex = email.indexOf('@');
     final base = atIndex > 0 ? email.substring(0, atIndex) : email;
-    if (base.isEmpty) {
-      return 'Utilisateur';
-    }
-    final normalized = base[0].toUpperCase() + base.substring(1);
-    return normalized;
+    if (base.isEmpty) return 'Utilisateur';
+    return base[0].toUpperCase() + base.substring(1);
   }
 
   @override
@@ -311,15 +302,22 @@ class _AuthScreenState extends State<AuthScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 6),
-                Text(
-                  isLogin ? 'Authentification' : 'Créer un compte',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF2D3C4D),
+
+                // ✅ Stable selector (Semantics) — NO const here
+                Semantics(
+                  label: 'authTitle',
+                  container: true,
+                  child: Text(
+                    isLogin ? 'Authentification' : 'Créer un compte',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF2D3C4D),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
+
                 Container(
                   height: 4,
                   width: 100,
@@ -331,18 +329,18 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 14),
                 Text(
                   isLogin
                       ? 'Connectez-vous pour accéder à votre coach financier vocal.'
                       : 'Créez votre compte et profitez de votre coach financier vocal.',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF5B6772),
-                  ),
+                  style: const TextStyle(fontSize: 15, color: Color(0xFF5B6772)),
                   textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: 24),
+
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 26),
@@ -362,61 +360,56 @@ class _AuthScreenState extends State<AuthScreen> {
                     children: [
                       const Text(
                         'Adresse e-mail',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF2C3A4B),
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF2C3A4B)),
                       ),
                       const SizedBox(height: 10),
-                      TextField(
-                        controller: emailCtrl,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          hintText: 'votre@email.com',
-                          filled: true,
-                          fillColor: const Color(0xFFF7F9FB),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 14,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade300,
+
+                      // ✅ email selector
+                      Semantics(
+                        label: 'emailField',
+                        textField: true,
+                        container: true,
+                        child: TextField(
+                          controller: emailCtrl,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: 'votre@email.com',
+                            filled: true,
+                            fillColor: const Color(0xFFF7F9FB),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: const BorderSide(
-                              color: Color(0xFF00B8A9),
-                              width: 1.4,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(color: Color(0xFF00B8A9), width: 1.4),
                             ),
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 22),
                       const Text(
                         'Mot de passe',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF2C3A4B),
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF2C3A4B)),
                       ),
                       const SizedBox(height: 10),
+
+                      // ✅ password selector
                       _PasswordField(
                         controller: passCtrl,
                         label: 'Mot de passe',
                         show: showPassword,
                         onToggle: () => setState(() => showPassword = !showPassword),
+                        semanticsLabel: 'passwordField',
                       ),
+
                       if (!isLogin) ...[
                         const SizedBox(height: 18),
                         const Text(
                           'Confirmer le mot de passe',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2C3A4B),
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF2C3A4B)),
                         ),
                         const SizedBox(height: 10),
                         _PasswordField(
@@ -424,112 +417,114 @@ class _AuthScreenState extends State<AuthScreen> {
                           label: 'Confirmer le mot de passe',
                           show: showConfirmPassword,
                           onToggle: () => setState(() => showConfirmPassword = !showConfirmPassword),
+                          semanticsLabel: 'confirmPasswordField',
                         ),
+
                         const SizedBox(height: 18),
                         const Text(
                           'Telephone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2C3A4B),
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF2C3A4B)),
                         ),
                         const SizedBox(height: 10),
-                        TextField(
-                          controller: phoneCtrl,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            hintText: 'Votre numero',
-                            filled: true,
-                            fillColor: const Color(0xFFF7F9FB),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 14,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide(
-                                color: Colors.grey.shade300,
+
+                        // ✅ phone selector
+                        Semantics(
+                          label: 'phoneField',
+                          textField: true,
+                          container: true,
+                          child: TextField(
+                            controller: phoneCtrl,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              hintText: 'Votre numero',
+                              filled: true,
+                              fillColor: const Color(0xFFF7F9FB),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF00B8A9),
-                                width: 1.4,
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: const BorderSide(color: Color(0xFF00B8A9), width: 1.4),
                               ),
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 18),
                         const Text(
                           'Localisation',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2C3A4B),
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF2C3A4B)),
                         ),
                         const SizedBox(height: 10),
-                        TextField(
-                          controller: locationCtrl,
-                          decoration: InputDecoration(
-                            hintText: _locating
-                                ? 'Detection en cours...'
-                                : (_locationFailed ? _locationHint : 'Votre ville'),
-                            filled: true,
-                            fillColor: const Color(0xFFF7F9FB),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 14,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide(
-                                color: Colors.grey.shade300,
+
+                        // ✅ location selector + detect btn selector
+                        Semantics(
+                          label: 'locationField',
+                          textField: true,
+                          container: true,
+                          child: TextField(
+                            controller: locationCtrl,
+                            decoration: InputDecoration(
+                              hintText: _locating
+                                  ? 'Detection en cours...'
+                                  : (_locationFailed ? _locationHint : 'Votre ville'),
+                              filled: true,
+                              fillColor: const Color(0xFFF7F9FB),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF00B8A9),
-                                width: 1.4,
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: const BorderSide(color: Color(0xFF00B8A9), width: 1.4),
                               ),
+                              suffixIcon: _locating
+                                  ? const Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      ),
+                                    )
+                                  : Semantics(
+                                      label: 'detectLocationBtn',
+                                      button: true,
+                                      container: true,
+                                      child: IconButton(
+                                        onPressed: _locating ? null : () => _detectLocation(showMessage: true),
+                                        icon: const Icon(Icons.my_location, color: Color(0xFF7A8794)),
+                                      ),
+                                    ),
                             ),
-                            suffixIcon: _locating
-                                ? const Padding(
-                                    padding: EdgeInsets.all(12),
-                                    child: SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    ),
-                                  )
-                                : IconButton(
-                                    onPressed: _locating ? null : () => _detectLocation(showMessage: true),
-                                    icon: const Icon(
-                                      Icons.my_location,
-                                      color: Color(0xFF7A8794),
-                                    ),
-                                  ),
                           ),
                         ),
                       ],
+
                       const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pushNamed(
-                              context,
-                              '/reset-password',
-                            ),
+
+                      // ✅ FIX overflow: replace Row(...) with Align(...)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Semantics(
+                          label: 'forgotPasswordBtn',
+                          button: true,
+                          container: true,
+                          child: TextButton(
+                            onPressed: () => Navigator.pushNamed(context, '/reset-password'),
                             child: const Text(
                               'Mot de passe oublié ?',
                               style: TextStyle(color: Color(0xFF3D7BCF)),
                             ),
                           ),
-                        ],
+                        ),
                       ),
+
                       const SizedBox(height: 4),
+
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 320),
@@ -549,65 +544,79 @@ class _AuthScreenState extends State<AuthScreen> {
                                   ),
                                 ],
                               ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18),
+                              child: Semantics(
+                                label: 'loginBtn',
+                                button: true,
+                                container: true,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
                                   ),
+                                  onPressed: _isSubmitting ? null : _submitAuth,
+                                  child: _isSubmitting
+                                      ? Semantics(
+                                          label: 'submittingLoader',
+                                          container: true,
+                                          child: const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          isLogin ? 'Se connecter' : 'Créer mon compte',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
                                 ),
-                                onPressed: _isSubmitting ? null : _submitAuth,
-                                child: _isSubmitting
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : Text(
-                                        isLogin ? 'Se connecter' : 'Créer mon compte',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
                               ),
                             ),
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 14),
+
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 320),
                           child: SizedBox(
                             height: 52,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                backgroundColor: Colors.white,
-                                foregroundColor: const Color(0xFF2C3A4B),
-                                shadowColor: Colors.black.withOpacity(0.06),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                  side: BorderSide(color: Colors.grey.shade200),
+                            child: Semantics(
+                              label: 'switchAuthModeBtn',
+                              button: true,
+                              container: true,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFF2C3A4B),
+                                  shadowColor: Colors.black.withOpacity(0.06),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                    side: BorderSide(color: Colors.grey.shade200),
+                                  ),
                                 ),
-                              ),
-                              onPressed: () {
-                                final nextIsLogin = !isLogin;
-                                setState(() => isLogin = nextIsLogin);
-                                if (!nextIsLogin) {
-                                  _ensureLocationPrefill();
-                                }
-                              },
-                              child: Text(
-                                isLogin ? "S'inscrire" : 'Déjà un compte ? Se connecter',
-                                style: const TextStyle(fontSize: 15),
+                                onPressed: () {
+                                  final nextIsLogin = !isLogin;
+                                  setState(() => isLogin = nextIsLogin);
+                                  if (!nextIsLogin) _ensureLocationPrefill();
+                                },
+                                child: Text(
+                                  isLogin ? "S'inscrire" : 'Déjà un compte ? Se connecter',
+                                  style: const TextStyle(fontSize: 15),
+                                ),
                               ),
                             ),
                           ),
@@ -616,7 +625,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 20),
+
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
@@ -636,10 +647,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       CircleAvatar(
                         radius: 18,
                         backgroundColor: Color(0xFFE8F4FF),
-                        child: Icon(
-                          Icons.mic_none_rounded,
-                          color: Color(0xFF03A9F4),
-                        ),
+                        child: Icon(Icons.mic_none_rounded, color: Color(0xFF03A9F4)),
                       ),
                       SizedBox(width: 12),
                       Expanded(
@@ -648,17 +656,11 @@ class _AuthScreenState extends State<AuthScreen> {
                           children: [
                             Text(
                               'Assistant de',
-                              style: TextStyle(
-                                color: Color(0xFF7A8794),
-                                fontSize: 13,
-                              ),
+                              style: TextStyle(color: Color(0xFF7A8794), fontSize: 13),
                             ),
                             Text(
                               'Coaching Financier Vocal',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF2C3A4B),
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF2C3A4B)),
                             ),
                           ],
                         ),
@@ -666,6 +668,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 18),
               ],
             ),
@@ -682,44 +685,50 @@ class _PasswordField extends StatelessWidget {
   final bool show;
   final VoidCallback onToggle;
 
+  // ✅ stable selector
+  final String semanticsLabel;
+
   const _PasswordField({
     required this.controller,
     required this.label,
     required this.show,
     required this.onToggle,
+    required this.semanticsLabel,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: !show,
-      decoration: InputDecoration(
-        hintText: label,
-        filled: true,
-        fillColor: const Color(0xFFF7F9FB),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 18,
-          vertical: 14,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
+    return Semantics(
+      label: semanticsLabel,
+      textField: true,
+      container: true,
+      child: TextField(
+        controller: controller,
+        obscureText: !show,
+        decoration: InputDecoration(
+          hintText: label,
+          filled: true,
+          fillColor: const Color(0xFFF7F9FB),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: Color(0xFF00B8A9),
-            width: 1.4,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: const BorderSide(color: Color(0xFF00B8A9), width: 1.4),
           ),
-        ),
-        suffixIcon: IconButton(
-          onPressed: onToggle,
-          icon: Icon(
-            show ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            color: const Color(0xFF7A8794),
+          suffixIcon: Semantics(
+            label: '${semanticsLabel}_toggle',
+            button: true,
+            container: true,
+            child: IconButton(
+              onPressed: onToggle,
+              icon: Icon(
+                show ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                color: const Color(0xFF7A8794),
+              ),
+            ),
           ),
         ),
       ),

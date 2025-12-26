@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart'; // ✅ important pour SemanticsBinding
 import 'package:intl/date_symbol_data_local.dart';
+
 import 'auth_screen.dart';
 import 'dashboard_screen.dart';
 import 'reset_password_screen.dart';
@@ -17,6 +20,12 @@ import 'reset_password_code_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Force Semantics on Web (pour que aria-label apparaisse dans DOM pour Selenium)
+  if (kIsWeb) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
+
   await initializeDateFormatting('fr_FR', null);
   runApp(const FinanceCoachApp());
 }

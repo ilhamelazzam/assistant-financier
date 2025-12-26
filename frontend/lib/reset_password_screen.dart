@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -10,7 +11,7 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final TextEditingController _emailCtrl = TextEditingController();
   bool _sending = false;
 

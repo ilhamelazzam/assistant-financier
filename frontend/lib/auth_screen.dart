@@ -9,6 +9,8 @@ import 'package:geolocator/geolocator.dart';
 
 import 'services/app_session.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
+import 'services/location_factory.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -18,7 +20,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final BackendApi _backendApi = BackendApi();
+  final BackendApi _backendApi = BackendFactory.create();
 
   bool isLogin = true;
   bool showPassword = false;
@@ -118,6 +120,19 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _detectLocation({required bool showMessage}) async {
+    final stub = LocationFactory.resolver;
+    if (stub != null) {
+      final value = await stub();
+      if (value != null && value.isNotEmpty) {
+        locationCtrl.text = value;
+        _locationFailed = false;
+        _locationHint = 'Votre ville';
+      } else {
+        _setManualFallback('Saisissez votre ville manuellement.');
+      }
+      return;
+    }
+
     if (_locating) return;
     if (!mounted) return;
     setState(() => _locating = true);

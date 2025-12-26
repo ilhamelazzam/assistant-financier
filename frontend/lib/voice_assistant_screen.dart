@@ -6,6 +6,7 @@ import 'goal_selection_screen.dart';
 import 'models/chat_message.dart';
 import 'services/app_session.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 import 'models/voice_session_models.dart';
 
 class VoiceAssistantScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class VoiceAssistantScreen extends StatefulWidget {
 }
 
 class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final SpeechToText _stt = SpeechToText();
   final FlutterTts _tts = FlutterTts();
   final TextEditingController _inputCtrl = TextEditingController();

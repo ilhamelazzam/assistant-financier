@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'models/budget_models.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 
 class BudgetScreenArgs {
   final String? highlightCategory;
@@ -24,7 +25,7 @@ class BudgetManagementScreen extends StatefulWidget {
 }
 
 class _BudgetManagementScreenState extends State<BudgetManagementScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final NumberFormat _amountFormat = NumberFormat.decimalPattern('fr_FR');
   final List<String> _categorySuggestions = const [
     'Alimentation',

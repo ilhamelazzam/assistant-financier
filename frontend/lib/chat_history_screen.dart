@@ -5,6 +5,7 @@ import 'models/goal_chat_conversation.dart';
 import 'models/goal_chat_history.dart';
 import 'services/app_session.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
   const ChatHistoryScreen({super.key});
@@ -14,7 +15,7 @@ class ChatHistoryScreen extends StatefulWidget {
 }
 
 class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   late Future<List<GoalChatHistoryItem>> _historyFuture;
   _HistoryFilter _activeFilter = _HistoryFilter.all;
 

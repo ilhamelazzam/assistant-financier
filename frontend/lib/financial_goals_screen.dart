@@ -5,6 +5,7 @@ import 'models/goal_chat_conversation.dart';
 import 'models/goal_chat_history.dart';
 import 'services/app_session.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 
 class FinancialGoalsScreen extends StatefulWidget {
   const FinancialGoalsScreen({super.key});
@@ -14,7 +15,7 @@ class FinancialGoalsScreen extends StatefulWidget {
 }
 
 class _FinancialGoalsScreenState extends State<FinancialGoalsScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final List<_Goal> _goals = [
     _Goal(
       title: 'Economiser pour vacances',

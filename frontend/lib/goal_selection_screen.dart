@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'services/app_session.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 import 'models/voice_session_models.dart';
 import 'models/chat_message.dart';
 
@@ -13,7 +14,7 @@ class GoalSelectionScreen extends StatefulWidget {
 }
 
 class _GoalSelectionScreenState extends State<GoalSelectionScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final TextEditingController _customGoalCtrl = TextEditingController();
 
   String? _selectedGoalId;

@@ -1,30 +1,25 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:coaching_financier/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('affiche l’écran d’authentification par défaut', (tester) async {
     await tester.pumpWidget(const FinanceCoachApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Authentification'), findsOneWidget);
+    expect(find.textContaining('Mot de passe'), findsWidgets);
+  });
+
+  testWidgets('bascule vers le formulaire de création de compte', (tester) async {
+    await tester.pumpWidget(const FinanceCoachApp());
+    await tester.pump();
+
+    await tester.tap(find.text("S'inscrire"));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Le champ de confirmation apparaît et le CTA passe à la création de compte.
+    expect(find.text('Confirmer le mot de passe'), findsWidgets);
+    expect(find.text('Créer mon compte'), findsOneWidget);
   });
 }

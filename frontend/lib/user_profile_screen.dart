@@ -7,6 +7,8 @@ import 'models/auth_response.dart';
 import 'models/user_profile.dart';
 import 'services/app_session.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
+import 'services/location_factory.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -16,7 +18,7 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   UserProfile? _profile;
   bool _loading = true;
   String? _error;
@@ -490,6 +492,15 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
   }
 
   Future<void> _detectLocation() async {
+    final stub = LocationFactory.resolver;
+    if (stub != null) {
+      final value = await stub();
+      if (value != null && value.isNotEmpty) {
+        _locationCtrl.text = value;
+        return;
+      }
+    }
+
     setState(() => _locating = true);
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import 'models/analysis_models.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 
 class AIReportsScreen extends StatefulWidget {
   const AIReportsScreen({super.key});
@@ -12,7 +13,7 @@ class AIReportsScreen extends StatefulWidget {
 }
 
 class _AIReportsScreenState extends State<AIReportsScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final NumberFormat _amountFormat = NumberFormat.decimalPattern('fr_FR');
 
   PeriodAnalysis? _monthStats;

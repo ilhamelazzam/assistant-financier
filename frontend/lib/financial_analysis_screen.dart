@@ -6,6 +6,7 @@ import 'models/goal_chat_conversation.dart';
 import 'models/goal_chat_history.dart';
 import 'goal_selection_screen.dart';
 import 'services/backend_api.dart';
+import 'services/backend_factory.dart';
 import 'services/app_session.dart';
 
 class AnalysisScreenArgs {
@@ -26,7 +27,7 @@ class FinancialAnalysisScreen extends StatefulWidget {
 }
 
 class _FinancialAnalysisScreenState extends State<FinancialAnalysisScreen> {
-  final BackendApi _api = BackendApi();
+  final BackendApi _api = BackendFactory.create();
   final NumberFormat _amountFormat = NumberFormat.decimalPattern('fr_FR');
   final ScrollController _scrollController = ScrollController();
 

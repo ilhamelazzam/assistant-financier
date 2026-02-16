@@ -48,11 +48,20 @@ flutter run -d chrome          # web
 <img width="251" height="451" alt="Capture d’écran 2025-12-20 144008" src="https://github.com/user-attachments/assets/ad075b3b-6620-4d8b-b823-d0efb4d7d7f0" />
 <img width="248" height="454" alt="Capture d’écran 2025-12-20 144154" src="https://github.com/user-attachments/assets/6046dbf4-d75a-4910-8511-563c5eaf6c74" />
   <img width="246" height="419" alt="Capture d’écran 2025-12-20 144323" src="https://github.com/user-attachments/assets/7ca0ad3f-a183-40c6-ad47-d3a0333be970" />
-/>
-
-
-
-
+<img width="248" height="455" alt="Capture d’écran 2025-12-20 144341" src="https://github.com/user-attachments/assets/2bb4d643-35d4-4799-ba17-3ed7f18b77d5" />
+<img width="246" height="377" alt="Capture d’écran 2025-12-20 144430" src="https://github.com/user-attachments/assets/36ce56f2-65a0-4548-ac05-3a68bb9e2594" />
+<img width="245" height="450" alt="Capture d’écran 2025-12-20 144446" src="https://github.com/user-attachments/assets/7972cd4c-b2af-4233-8ce1-f4d01056020e" />
+<img width="246" height="403" alt="Capture d’écran 2025-12-20 144558" src="https://github.com/user-attachments/assets/a2ebdc86-7c7d-4b03-a677-e2948d17cb49" />
+<img width="249" height="452" alt="Capture d’écran 2025-12-20 144714" src="https://github.com/user-attachments/assets/86443535-cb0d-4ca9-a423-79ae0660257a" />
+<img width="436" height="254" alt="Capture d’écran 2025-12-20 144749" src="https://github.com/user-attachments/assets/ef58689a-6d2c-42c8-9229-478b1e170f8b" />
+<img width="708" height="283" alt="Capture d’écran 2025-12-20 144816" src="https://github.com/user-attachments/assets/ed174b16-545e-412b-834d-5e5852d8de55" />
+<img width="246" height="355" alt="Capture d’écran 2025-12-20 145452" src="https://github.com/user-attachments/assets/a5478052-3cc5-4dd9-bca3-7d8fca06791f" />
+<img width="248" height="451" alt="Capture d’écran 2025-12-20 145503" src="https://github.com/user-attachments/assets/3ae45980-c815-40d0-a401-233fb15c2d5a" />
+<img width="250" height="452" alt="Capture d’écran 2025-12-20 145552" src="https://github.com/user-attachments/assets/9f98fe0a-e7a7-44d6-a674-89cd1b6b70d0" />
+<img width="248" height="314" alt="Capture d’écran 2025-12-20 145623" src="https://github.com/user-attachments/assets/2b1d4ade-f312-4bb7-aa66-696465ce9fcd" />
+<img width="247" height="360" alt="Capture d’écran 2025-12-20 145640" src="https://github.com/user-attachments/assets/fb89da4e-5601-4394-b531-aba79dfc389d" />
+<img width="250" height="265" alt="Capture d’écran 2025-12-20 145654" src="https://github.com/user-attachments/assets/9921b44b-1d73-4e49-bd01-bdf27ae6e09d" />
+<img width="247" height="298" alt="Capture d’écran 2025-12-20 145720" src="https://github.com/user-attachments/assets/050f55d6-c827-4537-a4aa-33dc8a86e08d" />
 
 
 ## Structure rapide

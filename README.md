@@ -42,7 +42,8 @@ flutter run -d chrome          # web
 - Backend (Spring) : `./gradlew test`
 
 ## Captures d’écran
-<img width="249" height="451" alt="Capture d’écran 2025-12-20 143605" src="https://github.com/user-attachments/assets/3ae9d5d8-f3e7-4a8e-88a2-07d18ad5edd8" />
+<img width="249" height="451" alt="Capture d’écran 2025-12-20 143605" src="https://github.com/user-attachments/assets/0a792c33-c9b5-4e14-9013-59eba2bf4df6" />
+
 
 ## Structure rapide
 - `frontend/` : app Flutter (écrans auth, dashboard, budgets, objectifs, analyses, rapports, notifications, assistant vocal, profil).

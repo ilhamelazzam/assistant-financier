@@ -43,6 +43,16 @@ flutter run -d chrome          # web
 
 ## Captures d’écran
 <img width="249" height="451" alt="Capture d’écran 2025-12-20 143605" src="https://github.com/user-attachments/assets/0a792c33-c9b5-4e14-9013-59eba2bf4df6" />
+<img width="249" height="451" alt="Capture d’écran 2025-12-20 143605" src="https://github.com/user-attachments/assets/484bd30d-6947-4220-991c-54636a01bf6f" />
+<img width="250" height="450" alt="Capture d’écran 2025-12-20 143946" src="https://github.com/user-attachments/assets/dca55dfd-0f57-4044-a4f6-47d47de63c89" />
+<img width="251" height="451" alt="Capture d’écran 2025-12-20 144008" src="https://github.com/user-attachments/assets/ad075b3b-6620-4d8b-b823-d0efb4d7d7f0" />
+<img width="248" height="454" alt="Capture d’écran 2025-12-20 144154" src="https://github.com/user-attachments/assets/6046dbf4-d75a-4910-8511-563c5eaf6c74" />
+  <img width="246" height="419" alt="Capture d’écran 2025-12-20 144323" src="https://github.com/user-attachments/assets/7ca0ad3f-a183-40c6-ad47-d3a0333be970" />
+/>
+
+
+
+
 
 
 ## Structure rapide

@@ -42,27 +42,7 @@ flutter run -d chrome          # web
 - Backend (Spring) : `./gradlew test`
 
 ## Captures d’écran
-Les captures sont dans `capture application/` :
-- `Capture d'écran 2025-12-20 143605.png` – Authentification.
-- `Capture d'écran 2025-12-20 143634.png` – Réinitialisation (code par e-mail).
-- `Capture d'écran 2025-12-20 143946.png` – Vérifier le code / nouveau mot de passe.
-- `Capture d'écran 2025-12-20 144008.png` – Création de compte.
-- `Capture d'écran 2025-12-20 144154.png` – Tableau de bord / Coach financier IA.
-- `Capture d'écran 2025-12-20 144323.png` – Analyse financière (revenus/dépenses).
-- `Capture d'écran 2025-12-20 144341.png` – Rapport financier IA (PDF).
-- `Capture d'écran 2025-12-20 144430.png` – Assistant vocal IA (chat guidé).
-- `Capture d'écran 2025-12-20 144446.png` – Assistant vocal IA (réponse IA).
-- `Capture d'écran 2025-12-20 144558.png` – Profil (édition).
-- `Capture d'écran 2025-12-20 144714.png` – Gestion du budget (liste catégories).
-- `Capture d'écran 2025-12-20 144749.png` – Ajout/édition d’un budget.
-- `Capture d'écran 2025-12-20 144816.png` – Choix d’objectif.
-- `Capture d'écran 2025-12-20 145452.png` – Objectifs financiers (liste).
-- `Capture d'écran 2025-12-20 145503.png` – Notifications (alertes, opportunités).
-- `Capture d'écran 2025-12-20 145552.png` – Rapports IA (score, reco, PDF).
-- `Capture d'écran 2025-12-20 145623.png` – Historique IA (filtres, reprise).
-- `Capture d'écran 2025-12-20 145640.png` – Assistant vocal IA (session active).
-- `Capture d'écran 2025-12-20 145654.png` – Assistant vocal IA (actions proposées).
-- `Capture d'écran 2025-12-20 145720.png` – Rapport financier IA (extrait PDF).
+<img width="249" height="451" alt="Capture d’écran 2025-12-20 143605" src="https://github.com/user-attachments/assets/3ae9d5d8-f3e7-4a8e-88a2-07d18ad5edd8" />
 
 ## Structure rapide
 - `frontend/` : app Flutter (écrans auth, dashboard, budgets, objectifs, analyses, rapports, notifications, assistant vocal, profil).
